@@ -33,8 +33,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-// Ensure promhttp is used (metrics endpoint).
-var _ = promhttp.Handler
+
 
 // ---------------------------------------------------------------------------
 // Config

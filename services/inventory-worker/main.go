@@ -109,7 +109,9 @@ func reserveStock(ctx context.Context, db *sql.DB, items []OrderItem) error {
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	for _, item := range items {
 		var stock int
