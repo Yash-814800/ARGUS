@@ -1,0 +1,30 @@
+.env
+*.pyc
+__pycache__/
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+.venv/
+venv/
+node_modules/
+*.log
+.DS_Store
+pgdata*/
+redisdata/
+natsdata/
+go.sum
+.claude/
+.cursor/
+
+# Scratch / debug scripts
+scratch_*.py
+list_models.py
+clear_incidents.py
+
+# Compiled Go binaries
+services/order-service/order-service
+services/inventory-worker/inventory-worker
+
+# sre_shared egg-info
+sre_shared.egg-info/

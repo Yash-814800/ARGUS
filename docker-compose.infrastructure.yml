@@ -1,0 +1,227 @@
+version: "3.9"
+
+# ===========================================================================
+# Core Infrastructure for the SRE Agent Swarm
+#
+# Includes: PostgreSQL (x4), Redis, NATS JetStream, Elasticsearch
+# Start with: docker compose -f docker-compose.infrastructure.yml up -d
+# ===========================================================================
+
+services:
+  # -------------------------------------------------------------------------
+  # PostgreSQL — Agent Incident Store
+  # Used by: agents (orchestrator, learning agent for incident persistence)
+  # -------------------------------------------------------------------------
+  postgres-agents:
+    image: postgres:16-alpine
+    container_name: postgres-agents
+    environment:
+      POSTGRES_DB: agents
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata-agents:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d agents"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - sre-net
+
+  # -------------------------------------------------------------------------
+  # PostgreSQL — Orders Store
+  # Used by: order-svc, inventory-worker
+  # -------------------------------------------------------------------------
+  postgres-orders:
+    image: postgres:16-alpine
+    container_name: postgres-orders
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata-orders:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d orders"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - sre-net
+
+  # -------------------------------------------------------------------------
+  # PostgreSQL — Payments Store
+  # Used by: payment-svc
+  # -------------------------------------------------------------------------
+  postgres-payments:
+    image: postgres:16-alpine
+    container_name: postgres-payments
+    environment:
+      POSTGRES_DB: payments
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata-payments:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d payments"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    networks:
+      - sre-net
+
+  # -------------------------------------------------------------------------
+  # Redis — Sessions & Token Cache
+  # Used by: user-svc (sessions), auth-svc (JWT blacklist)
+  # -------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+    volumes:
+      - redisdata:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    networks:
+      - sre-net
+
+  # -------------------------------------------------------------------------
+  # NATS JetStream — Agent Message Bus
+  # Used by: all agents and services for async messaging
+  # JetStream enabled via --js flag; data persisted to /data volume
+  # -------------------------------------------------------------------------
+  nats:
+    image: nats:2.10-alpine
+    container_name: nats
+    command: "--jetstream --store_dir /data --port 4222 --http_port 8222 --name sre-nats"
+    volumes:
+      - natsdata:/data
+    ports:
+      - "4222:4222" # Client connections
+      - "8222:8222" # HTTP monitoring
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:8222/healthz | grep ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    networks:
+      - sre-net
+
+  # -------------------------------------------------------------------------
+  # PostgreSQL — Inventory Store
+  # Used by: inventory-worker (stock levels, reservations)
+  # -------------------------------------------------------------------------
+  postgres-inventory:
+    image: postgres:16-alpine
+    container_name: postgres-inventory
+    environment:
+      POSTGRES_DB: inventory
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata-inventory:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inventory"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    networks:
+      - sre-net
+
+  # -------------------------------------------------------------------------
+  # Elasticsearch — Product Catalog + Search Index
+  # Used by: product-svc (index), search-svc (query)
+  # Single-node dev mode. Security disabled for local dev.
+  # -------------------------------------------------------------------------
+  elasticsearch:
+    image: elasticsearch:8.12.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name=sre-es
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health | grep -v red"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+    networks:
+      - sre-net
+
+# ===========================================================================
+# Volumes
+# ===========================================================================
+volumes:
+  pgdata-agents:
+  pgdata-orders:
+  pgdata-payments:
+  pgdata-inventory:
+  redisdata:
+  natsdata:
+  esdata:
+
+# ===========================================================================
+# Networks
+# ===========================================================================
+networks:
+  sre-net:
+    name: sre-net
+    driver: bridge
