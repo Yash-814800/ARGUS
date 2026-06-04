@@ -18,13 +18,8 @@
   <img src="https://img.shields.io/github/last-commit/sre-agent/argus-sre?style=flat-square" alt="Last Commit"/>
 </p>
 
-<!-- TODO: Replace with actual screen-recording GIF of the agent swarm resolving an incident -->
 <p align="center">
-  <img src="https://via.placeholder.com/900x500?text=🎬+ARGUS+Live+Demo+GIF" alt="ARGUS live demo" width="900"/>
-</p>
-
-<p align="center">
-  <b>📹 A live demo GIF showing ARGUS autonomously resolving a memory-leak incident in under 30 seconds should be recorded and placed here.</b>
+  <img src="docs/argus_demo.png" alt="ARGUS Live Demo Dashboard" width="900"/>
 </p>
 
 ---
