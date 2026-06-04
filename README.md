@@ -107,7 +107,7 @@ graph TD
         Loki <--> InventoryWorker
     end
     
-    subgraph SRE Swarm (Message Bus)
+    subgraph SRE_Swarm ["SRE Swarm (Message Bus)"]
         NATS{{"NATS JetStream Bus"}}
     end
     
