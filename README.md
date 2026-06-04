@@ -18,10 +18,6 @@
   <img src="https://img.shields.io/github/last-commit/sre-agent/argus-sre?style=flat-square" alt="Last Commit"/>
 </p>
 
-<p align="center">
-  <img src="docs/argus_demo.png" alt="ARGUS Live Demo Dashboard" width="900"/>
-</p>
-
 ---
 
 ## 📌 Table of Contents
@@ -480,11 +476,7 @@ Engineering is about trade-offs. ARGUS addresses autonomous remediation effectiv
 
 ---
 
-## 🎙️ Interview Elevator Pitch
 
-> "I built ARGUS — an autonomous SRE platform that closes the entire incident response loop without human involvement. Observers detect microservice failures via Prometheus, Loki, and synthetic probes. The Diagnoser runs an LLM debate engine across Gemini candidates, scoring hypotheses on evidence coverage, temporal correlation, and dependency graph plausibility. The Safety Agent gates every action behind blast radius calculations and rate limiting using NetworkX. The Remediator executes Docker restarts with automatic rollback. The Learner vector-embeds resolved incidents into ChromaDB so the system gets smarter over time. The whole swarm communicates asynchronously over NATS JetStream, coordinated by an Orchestrator running a 7-state Finite State Machine per incident."
-
----
 
 ## 🤝 Contributing & License
 
