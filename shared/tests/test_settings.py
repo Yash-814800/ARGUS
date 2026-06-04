@@ -7,9 +7,7 @@ requiring actual environment variables or .env files.
 
 from __future__ import annotations
 
-import os
 
-import pytest
 
 
 class TestSettings:

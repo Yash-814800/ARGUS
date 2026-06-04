@@ -2,7 +2,6 @@
 Tests for Search Service.
 """
 from unittest.mock import AsyncMock, patch
-import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 

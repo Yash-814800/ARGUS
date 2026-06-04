@@ -10,10 +10,8 @@ Tests cover:
 
 from __future__ import annotations
 
-import time
 from datetime import datetime, timedelta, timezone
 
-import pytest
 
 from shared.messaging.schema import AgentMessage
 

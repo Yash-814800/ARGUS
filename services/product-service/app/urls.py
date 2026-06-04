@@ -4,7 +4,6 @@ URL configuration for Product Service.
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from django.http import JsonResponse
-import os
 
 from app.models import CategoryViewSet, ProductViewSet, get_es
 

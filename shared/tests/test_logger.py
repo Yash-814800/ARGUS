@@ -11,7 +11,6 @@ import asyncio
 import logging
 
 import pytest
-import structlog
 
 from shared.logging.logger import (
     bind_context,

@@ -9,12 +9,9 @@ so tests assert on the column type and valid string values.
 """
 from __future__ import annotations
 
-import uuid
 from datetime import datetime
 
-import pytest
 from sqlalchemy import inspect, String
-from sqlalchemy.orm import RelationshipProperty
 
 from shared.db.models import (
     AgentHeartbeat,

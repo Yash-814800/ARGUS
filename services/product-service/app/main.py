@@ -6,7 +6,6 @@ Bootstraps Django, runs migrations, ensures the ES index exists,
 and starts the Gunicorn/uvicorn WSGI server.
 """
 import os
-import sys
 import django
 
 # Configure Django settings before anything else

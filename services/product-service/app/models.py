@@ -12,17 +12,12 @@ import uuid
 # Bootstrap Django settings before importing anything else
 import app.config  # noqa: F401 — side-effect: configures settings
 
-import json
-import time
-from datetime import datetime
 
 from django.db import models
-from elasticsearch import Elasticsearch, NotFoundError
-from rest_framework import serializers, status, viewsets
+from elasticsearch import Elasticsearch
+from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.urls import path, include
-from django.http import JsonResponse
 
 
 # ---------------------------------------------------------------------------

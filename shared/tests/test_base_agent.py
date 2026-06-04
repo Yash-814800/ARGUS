@@ -7,8 +7,7 @@ NATS/DB connections. NATS is fully mocked via unittest.mock.
 from __future__ import annotations
 
 import asyncio
-import signal
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 

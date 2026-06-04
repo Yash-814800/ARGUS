@@ -10,6 +10,8 @@ Run migrations with:
   alembic revision --autogenerate -m "description"  # Create new migration
 """
 
+import os
+import sys
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
@@ -31,7 +33,6 @@ if config.config_file_name is not None:
 # ---------------------------------------------------------------------------
 
 # Ensure shared package is importable (useful when running locally without install)
-import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from shared.db.models import Base  # noqa: E402  — must come after sys.path fix

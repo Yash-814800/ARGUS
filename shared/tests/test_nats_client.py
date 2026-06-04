@@ -4,7 +4,6 @@ Unit tests for the NATSClient build_message helper.
 
 from __future__ import annotations
 
-import pytest
 
 from shared.messaging.nats_client import build_message
 from shared.messaging.schema import AgentMessage
